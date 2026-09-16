@@ -1,33 +1,41 @@
 package Project1.Server;
 
+import java.io.*;
+import java.net.*;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
+public class Server implements Runnable {
 
+    public static final int PORT = 5000;
+    private final BufferedReader in;
+    private final PrintStream out;
+    private final String clientMachine;
 
+    public Server(Socket socket) throws IOException {
+        clientMachine = socket.getInetAddress().getHostName();
+        System.out.println("Connection from " + clientMachine);
 
-public class Server extends Thread{
+        out = new PrintStream(socket.getOutputStream());
+        in = new BufferedReader(new InputStreamReader(
+                socket.getInputStream()));
+        System.out.println("Waiting for client...");
+    }
 
-    private final int port = 5000;
-
-    public void start(){
-        try(ServerSocket serverSocket = new ServerSocket(port)){
-            System.out.println("Starting Server......");
-
-            Socket ClientSocket = serverSocket.accept();
-            System.out.println("New Client Connected at port: " +
-                    "\nIP ADDRESS : " + ClientSocket.getInetAddress() +
-                    "\n PORT: " + port);
-
-
-
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public void run() {
+        try {
+            String messageFromClient;
+            while((messageFromClient = in.readLine()) != null) {
+                System.out.println("Message \"" + messageFromClient + "\" from " + clientMachine);
+                out.println("Thanks for this message: "+messageFromClient);
+            }
+        } catch(IOException ex) {
+            System.out.println("Shutting down single client server");
+        } finally {
+            closeQuietly();
         }
+    }
+
+    private void closeQuietly() {
+        try { in.close(); out.close();
+        } catch(IOException ex) {}
     }
 }
