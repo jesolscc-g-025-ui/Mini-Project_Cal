@@ -12,7 +12,7 @@ public class ClientConnection {
                         socket.getInputStream()));
         )
         {
-            out.println("Hello Server");
+            out.println("Hello WeThinkCode");
             out.flush();
             String messageFromServer = in.readLine();
             System.out.println("Response: "+messageFromServer);

@@ -3,14 +3,14 @@ package Project1.Server;
 import java.io.*;
 import java.net.*;
 
-public class Server implements Runnable {
+public class SimpleServer implements Runnable {
 
     public static final int PORT = 5000;
     private final BufferedReader in;
     private final PrintStream out;
     private final String clientMachine;
 
-    public Server(Socket socket) throws IOException {
+    public SimpleServer(Socket socket) throws IOException {
         clientMachine = socket.getInetAddress().getHostName();
         System.out.println("Connection from " + clientMachine);
 
